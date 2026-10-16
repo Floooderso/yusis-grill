@@ -1,0 +1,506 @@
+/* ==========================================================================
+   Yusi's Grill, Radevormwald
+   Idee: Die Seite ist der Kiosk. Anthrazit wie die Wand, weiße Leuchtschilder,
+   fünf Lampen unter dem Dach, schwarze Karte mit roten Preis-Pillen.
+   Alles mittig: eine Spalte, Logo in der Mitte der Kopfzeile.
+   ========================================================================== */
+
+:root {
+  --wall:   #3b4550;   /* Kiosk-Fassade */
+  --wall-d: #2b333c;   /* Dach, Schatten */
+  --board:  #14171b;   /* schwarze Speisekarte */
+  --sign:   #f6f5f1;   /* beleuchtetes Schild */
+  --ink:    #14171b;
+  --red:    #d93a2b;   /* Preis-Pillen auf der Karte */
+  --red-d:  #a11a14;   /* Banner im Logo */
+  --gold:   #f3c35c;   /* Schrift im Logo, Lampen */
+  --mute:   #b6bec7;
+  --line:   rgba(246, 245, 241, .16);
+  --ok:     #5bd68a;
+
+  --f: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+
+  --gutter: clamp(16px, 4.6vw, 44px);
+  --max: 1200px;
+  --narrow: 920px;
+  --header-h: 64px;
+
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + 16px);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--wall);
+  color: var(--sign);
+  font: 400 1.0625rem/1.55 var(--f);
+  font-stretch: 100%;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; }
+ul { margin: 0; padding: 0; list-style: none; }
+h1, h2, h3, h4, p, figure, dl, dd { margin: 0; }
+button { font: inherit; }
+
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
+
+.vh {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+.skip {
+  position: absolute; left: 12px; top: -60px; z-index: 100;
+  background: var(--gold); color: var(--ink); padding: .7em 1em; font-weight: 700; border-radius: 6px;
+}
+.skip:focus { top: 12px; }
+
+.wrap { max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter); }
+.narrow { max-width: var(--narrow); margin-inline: auto; padding-inline: var(--gutter); }
+
+/* --- Typo-Bausteine ----------------------------------------------------- */
+.display {
+  font-weight: 800;
+  font-stretch: 62%;
+  text-transform: uppercase;
+  line-height: .9;
+  letter-spacing: .004em;
+  text-wrap: balance;
+}
+.label {
+  font-weight: 700;
+  font-stretch: 75%;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  font-size: .8125rem;
+}
+
+.sec { padding-block: clamp(56px, 9vw, 112px); }
+.sec__head { display: grid; justify-items: center; gap: 16px; text-align: center; }
+.sec__title { font-size: clamp(2.8rem, 14vw, 7.4rem); }
+.sec__lead { max-width: 46ch; color: #dfe3e7; }
+
+/* --- Buttons ------------------------------------------------------------ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .6em;
+  min-height: 50px; padding: .75em 1.5em;
+  border: 2px solid transparent; border-radius: 999px;
+  font-weight: 800; font-stretch: 85%; font-size: 1.0625rem; line-height: 1;
+  text-transform: uppercase; letter-spacing: .06em; text-decoration: none;
+  cursor: pointer;
+  transition: background-color .15s, color .15s, border-color .15s, transform .15s;
+}
+.btn:active { transform: translateY(1px); }
+.btn svg { width: 1.15em; height: 1.15em; flex: none; }
+.btn--red { background: var(--red); color: #fff; }
+.btn--red:hover { background: var(--red-d); }
+.btn--line { border-color: var(--sign); color: var(--sign); }
+.btn--line:hover { background: var(--sign); color: var(--ink); }
+.btn--white { background: var(--sign); color: var(--ink); }
+.btn--white:hover { background: var(--gold); }
+
+/* ==========================================================================
+   Kopfzeile: Logo mittig, Links links und rechts
+   ========================================================================== */
+.top {
+  position: sticky; top: 0; z-index: 60;
+  height: var(--header-h);
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px;
+  padding-inline: var(--gutter);
+  background: var(--wall-d);
+  border-bottom: 1px solid var(--line);
+}
+.top__brand { grid-column: 2; display: block; line-height: 0; }
+.top__brand img { height: 54px; width: auto; }
+.top__nav, .top__side { display: flex; align-items: center; gap: clamp(14px, 3vw, 30px); }
+.top__nav { grid-column: 1; justify-self: start; }
+.top__side { grid-column: 3; justify-self: end; }
+.top a:not(.btn):not(.top__brand) {
+  padding: .6em .1em; text-decoration: none;
+  font-weight: 700; font-stretch: 75%; text-transform: uppercase; letter-spacing: .08em; font-size: .92rem;
+  border-bottom: 2px solid transparent; white-space: nowrap;
+}
+.top a:not(.btn):not(.top__brand):hover { border-bottom-color: var(--gold); }
+.hide-sm { display: none !important; }
+
+@media (min-width: 860px) {
+  :root { --header-h: 76px; }
+  .top__brand img { height: 64px; }
+  .hide-sm { display: inline-flex !important; }
+  .top__tel { letter-spacing: .04em !important; font-stretch: 85% !important; }
+  .top .btn { min-height: 44px; padding-block: .6em; }
+}
+
+/* Status-Streifen (live) */
+.strip { background: var(--board); font-size: .92rem; font-weight: 600; }
+.strip__in {
+  display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .1em .75em;
+  min-height: 44px; padding: 6px var(--gutter); text-align: center;
+}
+.strip__addr { display: none; color: var(--mute); font-weight: 500; }
+@media (min-width: 640px) { .strip__addr { display: inline; } .strip__addr::before { content: "·"; margin-right: .75em; } }
+
+.dot { width: .62em; height: .62em; border-radius: 50%; background: var(--mute); flex: none; }
+[data-state="open"] .dot { background: var(--ok); box-shadow: 0 0 0 4px rgba(91, 214, 138, .22); }
+[data-state="soon"] .dot { background: var(--gold); box-shadow: 0 0 0 4px rgba(243, 195, 92, .22); }
+[data-state="closed"] .dot { background: var(--red); }
+
+/* ==========================================================================
+   Hero: Fassade mit Schild, Dach und fünf Lampen
+   ========================================================================== */
+.hero {
+  position: relative; overflow: hidden;
+  background: radial-gradient(130% 90% at 50% -10%, #4c5865 0%, var(--wall) 60%);
+}
+.facade { max-width: var(--narrow); margin-inline: auto; padding-inline: var(--gutter); }
+.facade--top { padding-top: clamp(26px, 5vw, 56px); }
+
+.sign {
+  display: flex; gap: .13em; margin: 0;
+  font-weight: 800; font-stretch: 100%; line-height: 1; letter-spacing: -.02em;
+  font-size: clamp(2.05rem, 10.6vw, 6.8rem);
+  color: var(--ink);
+}
+.sign__plate {
+  flex: 1 1 0; text-align: center;
+  padding: .13em .1em .17em;
+  background: linear-gradient(#fcfbf7, #eceae3);
+  border-radius: .05em .05em 0 0;
+  box-shadow:
+    inset 0 0 0 .035em #c9c8c0,
+    inset 0 -.35em .6em -.2em rgba(255, 196, 108, .45),
+    0 0 1.2em rgba(255, 220, 160, .16);
+  white-space: nowrap;
+}
+.roof {
+  height: clamp(16px, 2.6vw, 34px);
+  background: linear-gradient(#262d34, var(--board));
+  border-top: 1px solid rgba(255, 255, 255, .12);
+  box-shadow: 0 14px 26px -10px rgba(0, 0, 0, .55);
+}
+
+.lamps {
+  --lamp: clamp(20px, 4vw, 40px);
+  display: flex; justify-content: space-around;
+  padding-top: clamp(12px, 2.2vw, 26px);
+}
+.lamp {
+  width: var(--lamp); height: var(--lamp); border-radius: 50%;
+  background: radial-gradient(circle at 36% 30%, #fff7de 0 13%, #ffd98c 38%, #f0a63c 78%, #c9801f 100%);
+  box-shadow:
+    0 0 0 .2em #1d242a,
+    0 0 1.2em .25em rgba(243, 195, 92, .6),
+    0 0 3.6em .7em rgba(243, 195, 92, .2);
+  animation: lamp-on .8s ease-out both;
+  animation-delay: calc(var(--i) * 150ms + 250ms);
+}
+@keyframes lamp-on {
+  0%   { opacity: .3; filter: brightness(.55) saturate(.6); }
+  55%  { opacity: 1;  filter: brightness(1.35); }
+  100% { opacity: 1;  filter: none; }
+}
+
+.hero__body {
+  display: grid; justify-items: center; text-align: center;
+  padding-block: clamp(30px, 5vw, 52px) clamp(44px, 7vw, 84px);
+}
+.hero__lead {
+  max-width: 24ch;
+  font-weight: 600; font-stretch: 82%;
+  font-size: clamp(1.5rem, 5.4vw, 2.6rem); line-height: 1.15; letter-spacing: -.012em;
+  text-wrap: balance;
+}
+.hero__since { color: var(--mute); margin-top: 14px; max-width: 36ch; font-size: 1rem; text-wrap: balance; }
+.hero__cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 26px; width: 100%; }
+.hero__cta .btn { flex: 1 1 230px; max-width: 330px; }
+
+.tags {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;
+  width: 100%; max-width: 560px; margin-top: 30px;
+}
+.tag {
+  text-decoration: none; color: var(--ink);
+  background: var(--sign); border-radius: 8px; padding: .6em .4em .55em;
+  display: grid; justify-items: center; gap: .1em;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 10px 20px -12px rgba(0, 0, 0, .6);
+  transition: transform .15s;
+}
+.tag:hover { transform: translateY(-2px); }
+.tag__k { font-weight: 700; font-stretch: 75%; text-transform: uppercase; letter-spacing: .08em; font-size: .72rem; color: #4b535b; }
+.tag__v { font-weight: 800; font-stretch: 62%; font-size: 2rem; line-height: .95; color: var(--red); white-space: nowrap; }
+.tag__v small { font-size: .52em; font-stretch: 75%; letter-spacing: .02em; color: var(--ink); margin-right: .2em; }
+@media (min-width: 640px) {
+  .tag { padding: .8em .6em .7em; }
+  .tag__k { font-size: .82rem; }
+  .tag__v { font-size: 2.6rem; }
+}
+
+/* Yaprak Döner im Hero hervorgehoben */
+.hero__star { font-weight: 800; }
+
+/* ==========================================================================
+   Yaprak Döner: schwarze Tafel direkt unter dem Hero, mit dem Logo
+   ========================================================================== */
+.yaprak { background: var(--board); padding-block: clamp(44px, 7vw, 96px); }
+.yaprak__in { display: grid; justify-items: center; gap: clamp(16px, 2.6vw, 28px); text-align: center; }
+.yaprak__title { font-size: clamp(3.2rem, 17vw, 9rem); }
+.yaprak__lead { max-width: 38ch; color: #dfe3e7; font-size: 1.125rem; text-wrap: balance; }
+.yaprak__photos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; max-width: 640px; margin-top: 6px; }
+.yaprak__photos img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 40%; border-radius: 6px; }
+.tags--four { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 640px; margin-top: 0; }
+@media (min-width: 640px) { .tags--four { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+/* ==========================================================================
+   Bilder (direkt unter dem Hero)
+   ========================================================================== */
+.bilder { background: var(--wall-d); }
+.bilder .sec__head { margin-bottom: clamp(26px, 4vw, 44px); }
+
+.shots {
+  --card: min(82vw, 380px);
+  display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: 4px max(var(--gutter), calc((100% - var(--card)) / 2)) 14px;
+  scrollbar-width: none;
+}
+.shots::-webkit-scrollbar { display: none; }
+.shot { flex: 0 0 var(--card); scroll-snap-align: center; }
+.shot figure { display: grid; gap: 14px; justify-items: center; text-align: center; }
+.shot__img { position: relative; width: 100%; }
+.shot__img img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; }
+.shot--plate .shot__img img { object-position: 82% 50%; }
+.shot--laden .shot__img img { object-position: 55% 50%; }
+.shot figcaption { color: var(--mute); font-size: .98rem; max-width: 32ch; }
+.shot figcaption strong {
+  display: block; margin-bottom: .2em; color: var(--sign);
+  font-weight: 800; font-stretch: 72%; text-transform: uppercase; letter-spacing: .03em; font-size: 1.35rem; line-height: 1.05;
+}
+.shots__hint { margin-top: 6px; text-align: center; color: var(--mute); font-size: .85rem; }
+
+@media (min-width: 860px) {
+  .shots {
+    --card: auto;
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(18px, 2.6vw, 36px);
+    max-width: var(--max); margin-inline: auto; padding: 0 var(--gutter);
+    overflow: visible; scroll-snap-type: none;
+  }
+  .shot { flex: none; }
+  .shots__hint { display: none; }
+}
+
+.pin { position: absolute; left: var(--x); top: var(--y); z-index: 2; width: 0; height: 0; display: none; }
+[data-photo].is-ready .pin { display: block; }
+.pin::before {
+  content: ""; position: absolute; left: -6px; top: -6px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--red); box-shadow: 0 0 0 3px #fff, 0 2px 8px rgba(0, 0, 0, .5);
+}
+.pin span {
+  position: absolute; left: 14px; top: -14px; white-space: nowrap;
+  background: var(--sign); color: var(--ink); border-radius: 4px; padding: .25em .6em .22em;
+  font-weight: 800; font-stretch: 75%; text-transform: uppercase; letter-spacing: .05em; font-size: .78rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .45);
+}
+.pin--l span { left: auto; right: 14px; }
+
+/* ==========================================================================
+   Anfahrt (weißes Schild)
+   ========================================================================== */
+.anfahrt {
+  position: relative;
+  background: var(--sign); color: var(--ink);
+  padding-block: clamp(70px, 10vw, 120px) clamp(52px, 8vw, 100px);
+  --z: 13px;
+  -webkit-mask: conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) 50% 0 / calc(var(--z) * 2) 100%;
+          mask: conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) 50% 0 / calc(var(--z) * 2) 100%;
+}
+.anfahrt__in { display: grid; justify-items: center; gap: 22px; text-align: center; }
+.anfahrt__title { font-size: clamp(2.1rem, 12.2vw, 7.2rem); color: var(--ink); }
+.addr { font-size: 1.3rem; font-weight: 600; font-stretch: 90%; line-height: 1.3; }
+.anfahrt__lead { max-width: 40ch; color: #2c3238; }
+.anfahrt__cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%; }
+.anfahrt__cta .btn { flex: 1 1 200px; max-width: 260px; }
+.anfahrt__cta .btn--line { border-color: var(--ink); color: var(--ink); }
+.anfahrt__cta .btn--line:hover { background: var(--ink); color: var(--sign); }
+
+.hours-box {
+  width: 100%; max-width: 560px; text-align: left;
+  background: #fff; border-radius: 10px; padding: clamp(18px, 3vw, 30px); box-shadow: 0 0 0 1px rgba(20, 23, 27, .08);
+}
+.hours-box__status { display: flex; align-items: center; justify-content: center; gap: .7em; font-weight: 700; margin-bottom: 8px; text-align: center; }
+.hours-box .dot { background: #8b939b; }
+.hours-box[data-state="open"] .dot { background: #1e9e55; box-shadow: 0 0 0 4px rgba(30, 158, 85, .2); }
+.hours-box[data-state="soon"] .dot { background: #d99a1c; box-shadow: 0 0 0 4px rgba(217, 154, 28, .2); }
+.hours-box[data-state="closed"] .dot { background: var(--red); }
+
+.hours { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.hours th, .hours td { padding: .62em 0; border-bottom: 1px solid rgba(20, 23, 27, .16); text-align: left; font-size: 1.02rem; }
+.hours th { font-weight: 700; font-stretch: 85%; text-transform: uppercase; letter-spacing: .05em; font-size: .9rem; }
+.hours td { text-align: right; font-weight: 500; }
+.hours tr.is-today th, .hours tr.is-today td { font-weight: 800; color: var(--red-d); }
+.hours tr.is-today th::after { content: " · heute"; font-weight: 600; letter-spacing: .03em; text-transform: none; font-stretch: 100%; }
+.hours .is-off td { color: #5b6269; }
+.hours__note { margin-top: 12px; color: #4b535b; font-size: .92rem; text-align: center; }
+
+/* ==========================================================================
+   Bewertung (rotes Band)
+   ========================================================================== */
+.band { background: var(--red); color: #fff; padding-block: clamp(44px, 7vw, 84px); }
+.band__in { display: grid; justify-items: center; gap: 10px; text-align: center; }
+.band__score { display: flex; align-items: flex-end; justify-content: center; gap: .3em; line-height: .8; }
+.band__num { font-size: clamp(6.5rem, 30vw, 12rem); }
+.band__of { font-weight: 800; font-stretch: 62%; text-transform: uppercase; font-size: clamp(1.4rem, 5vw, 2.2rem); padding-bottom: .15em; line-height: 1; }
+.band__meta { margin-top: 10px; }
+.band__quote { font-weight: 600; font-stretch: 85%; font-size: clamp(1.4rem, 4.4vw, 2rem); line-height: 1.2; margin-top: 8px; text-wrap: balance; }
+.band__src { font-size: .9rem; font-weight: 500; }
+.band__cta { margin-top: 16px; }
+
+/* ==========================================================================
+   Speisekarte (ganz unten)
+   ========================================================================== */
+.karte { background: var(--wall); padding-block: clamp(56px, 9vw, 110px) clamp(48px, 8vw, 100px); }
+.karte__title { font-size: clamp(3.2rem, 17vw, 9rem); }
+.karte__note { color: var(--mute); max-width: 54ch; font-size: 1rem; }
+
+.cats {
+  position: sticky; top: var(--header-h); z-index: 40;
+  display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
+  margin-top: 30px; padding: 12px var(--gutter);
+  background: var(--wall); border-bottom: 1px solid var(--line);
+}
+.cats::-webkit-scrollbar { display: none; }
+.cats a:first-child { margin-left: auto; }
+.cats a:last-child { margin-right: auto; }
+.cats a {
+  flex: 0 0 auto; text-decoration: none;
+  padding: .55em 1.05em; border: 2px solid var(--line); border-radius: 999px;
+  font-weight: 700; font-stretch: 80%; text-transform: uppercase; letter-spacing: .06em; font-size: .9rem;
+  transition: background-color .15s, color .15s, border-color .15s;
+}
+.cats a:hover { border-color: var(--sign); }
+.cats a.is-active { background: var(--sign); color: var(--ink); border-color: var(--sign); }
+
+.board {
+  background: var(--board);
+  padding: clamp(10px, 3vw, 40px) var(--gutter) clamp(30px, 5vw, 60px);
+  box-shadow: 0 40px 80px -40px rgba(0, 0, 0, .8);
+}
+.board__in { max-width: 820px; margin-inline: auto; }
+.cat { padding-top: clamp(26px, 4vw, 46px); }
+.cat + .cat { margin-top: clamp(18px, 3vw, 34px); border-top: 1px solid var(--line); }
+.cat__title { color: var(--red); text-align: center; font-size: clamp(2.3rem, 9vw, 3.8rem); }
+
+.items { margin-top: 12px; }
+.item {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 18px; align-items: start;
+  padding-block: 15px; border-bottom: 1px solid var(--line);
+}
+.item__name {
+  font-weight: 800; font-stretch: 72%; text-transform: uppercase; letter-spacing: .02em;
+  font-size: clamp(1.3rem, 4.6vw, 1.6rem); line-height: 1.05;
+}
+.item__desc { grid-column: 1; color: var(--mute); font-size: .95rem; line-height: 1.4; margin-top: .25em; }
+.item--yaprak .item__name { color: var(--gold); }
+.item__v {
+  display: inline-block; margin-left: .5em; vertical-align: .15em;
+  font-size: .62rem; font-stretch: 100%; letter-spacing: .08em; font-weight: 700;
+  color: var(--gold); border: 1px solid currentColor; border-radius: 99px; padding: .15em .6em;
+}
+.price {
+  grid-column: 2; grid-row: 1 / span 2; align-self: start;
+  background: var(--red); color: #fff;
+  font-weight: 800; font-stretch: 85%; font-size: 1.05rem; line-height: 1; font-variant-numeric: tabular-nums;
+  padding: .5em .95em; border-radius: 999px; white-space: nowrap;
+}
+
+.platte {
+  margin-top: 22px; padding: clamp(22px, 4vw, 40px);
+  background: var(--red); color: #fff; border-radius: 14px;
+  display: grid; justify-items: center; gap: 12px; text-align: center;
+}
+.platte__t { font-size: clamp(2.6rem, 11vw, 5rem); }
+.platte__d { max-width: 46ch; font-size: 1.02rem; font-weight: 500; }
+.platte__p {
+  background: var(--sign); color: var(--red-d);
+  font-weight: 800; font-stretch: 70%; font-size: clamp(2.2rem, 7vw, 3.2rem); line-height: 1;
+  padding: .22em .5em; border-radius: 999px; font-variant-numeric: tabular-nums; margin-top: 4px;
+}
+
+.extras { display: grid; gap: clamp(24px, 4vw, 40px); margin-top: 14px; }
+.extras h4 { margin-bottom: 4px; color: var(--mute); text-align: center; }
+.mini__row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-block: 11px; border-bottom: 1px solid var(--line); }
+.mini__row span:first-child { font-weight: 700; font-stretch: 80%; text-transform: uppercase; letter-spacing: .03em; font-size: 1.125rem; }
+.mini__row span:last-child { color: var(--gold); font-weight: 800; font-stretch: 85%; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.karte__cta { display: grid; justify-items: center; gap: 12px; margin-top: clamp(28px, 4vw, 44px); text-align: center; }
+.karte__cta p { color: var(--mute); font-size: .95rem; }
+
+/* ==========================================================================
+   Fuß
+   ========================================================================== */
+.foot { background: var(--board); padding-block: clamp(40px, 6vw, 72px) 40px; color: var(--mute); text-align: center; }
+.foot__grid { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 34px clamp(40px, 8vw, 96px); }
+.foot__brand { display: grid; gap: 12px; justify-items: center; }
+.foot__brand img { width: 170px; }
+.foot h2 { color: var(--sign); margin-bottom: 10px; }
+.foot a { color: var(--sign); text-underline-offset: 3px; }
+.foot li + li { margin-top: .35em; }
+.foot__small {
+  margin-top: 36px; padding-top: 22px; border-top: 1px solid var(--line); font-size: .875rem;
+  display: grid; justify-items: center; gap: 6px;
+}
+.foot__brand { flex: 1 1 100%; }
+
+/* ==========================================================================
+   Schnellzugriff (nur Smartphone)
+   ========================================================================== */
+.dock {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 70;
+  display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 8px;
+  padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+  background: rgba(20, 23, 27, .96); border-top: 1px solid var(--line);
+  backdrop-filter: blur(8px);
+}
+.dock a {
+  display: grid; justify-items: center; align-content: center; gap: 3px; min-height: 52px;
+  border-radius: 12px; text-decoration: none;
+  font-weight: 700; font-stretch: 80%; text-transform: uppercase; letter-spacing: .08em; font-size: .78rem;
+}
+.dock svg { width: 21px; height: 21px; }
+.dock .is-main { background: var(--red); color: #fff; }
+@media (max-width: 859px) { .foot { padding-bottom: calc(40px + 76px + env(safe-area-inset-bottom, 0px)); } }
+@media (min-width: 860px) { .dock { display: none; } }
+
+/* ==========================================================================
+   Rechtliche Seiten
+   ========================================================================== */
+.legal { background: var(--sign); color: var(--ink); padding-block: clamp(40px, 7vw, 90px) clamp(60px, 9vw, 120px); }
+.legal__in { max-width: 820px; margin-inline: auto; padding-inline: var(--gutter); }
+.legal h1 { font-size: clamp(2.6rem, 12vw, 6rem); margin-bottom: 18px; text-align: center; }
+.legal__lead { color: #3a4147; margin-bottom: 30px; text-align: center; }
+.legal h2 { font-weight: 800; font-stretch: 75%; text-transform: uppercase; letter-spacing: .02em; font-size: 1.5rem; margin: 2.2em 0 .5em; }
+.legal p, .legal li { color: #2c3238; margin-bottom: .9em; }
+.legal ul { padding-left: 1.2em; list-style: disc; }
+.legal a { color: var(--red-d); text-underline-offset: 3px; }
+.legal__todo {
+  background: #fff6d8; border: 1px solid #e6c45a; border-radius: 8px; padding: 16px 18px; margin-bottom: 30px; color: #3d3410;
+}
+.todo { background: #ffe9a8; border-radius: 4px; padding: 0 .35em; font-weight: 600; }
+.legal__toc { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; margin-bottom: 26px; }
+.legal__toc a { font-weight: 600; }
+
+/* ==========================================================================
+   Bewegung respektieren
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .lamp { animation: none; }
+  .btn, .tag, .cats a { transition: none; }
+}
